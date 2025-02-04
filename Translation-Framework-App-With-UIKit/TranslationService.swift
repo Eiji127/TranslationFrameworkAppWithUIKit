@@ -26,8 +26,8 @@ struct TranslationService {
                 cache.setObject(NSString(string: response.targetText), forKey: NSString(string: text))
                 return response.targetText
             }
-        } catch {
-            print("Error: Translation Failed")
+        } catch(let error) {
+            print("Error: Translation Failed - \(error)")
         }
         return text
     }

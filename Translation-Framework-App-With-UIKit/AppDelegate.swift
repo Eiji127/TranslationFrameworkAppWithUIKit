@@ -15,26 +15,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
     }
     private let service = TranslationService()
-    var foodItems = ["Salad 🥗", "Fried Potato 🍟", "Soup 🍜"]
+    var foodItems = ["The Best Food is Mcdonald's Fried Potato 🍟", "Salad 🥗", "Soup 🍜"]
 
     var window: UIWindow?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // `UIApplication.shared.connectedScenes` から `UIWindowScene` を取得
-//        if let windowScene = application.connectedScenes.first as? UIWindowScene {
-//            let window = UIWindow(windowScene: windowScene)
-//            
-//            // エントリーポイントの ViewController を指定
-//            let viewController = ViewController()
-//            viewController.delegate = self
-//            let navigationController = UINavigationController(rootViewController: viewController)
-//            
-//            // UIWindow の rootViewController を設定
-//            window.rootViewController = navigationController
-//            window.makeKeyAndVisible()
-//            
-//            self.window = window
-//        }
         return true
     }
 
