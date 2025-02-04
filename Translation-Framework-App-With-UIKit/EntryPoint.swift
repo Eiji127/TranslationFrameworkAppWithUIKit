@@ -11,19 +11,17 @@ import Translation
 
 @main
 struct EntryPoint: App {
-    
     @AppStorage("targetLanguage") private var targetLanguage = "ja"
 
-    @State private var configuration = TranslationSession.Configuration()
+    @State private var translationContext = TranslationContext()
     @UIApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
-    
+
     var body: some Scene {
         WindowGroup {
-          VStack {}
-            .translationTask(configuration) { (session) in
-              appDelegate.translationSession = session
-            }
+            VStack {}
+                .translationTask(translationContext.configuration) { (session) in
+                    appDelegate.translationSession = session
+                }
         }
     }
 }
-
