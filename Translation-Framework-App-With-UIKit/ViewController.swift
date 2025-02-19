@@ -6,27 +6,31 @@
 //
 
 import UIKit
-import Translation
-
-protocol ViewControllerDelegate: AnyObject {
-    func translateViewTexts()
-}
 
 class ViewController: UIViewController {
     
-    weak var delegate: ViewControllerDelegate?
-    
     private lazy var textLabel: UILabel = {
         let label = UILabel()
-        label.text = "Sample Project"
+        label.text = "The Best Food is Mcdonald's Fried Potato 🍟"
         label.textAlignment = .center
         return label
+    }()
+    
+    private lazy var button: UIButton = {
+        let button = UIButton()
+        button.titleLabel?.text = "Please Tapp This Button"
+        button.setTitle("Please Tapp This Button", for: .normal)
+        button.frame = CGRect(x: 100, y: 200, width: 200, height: 50)
+        button.layer.cornerRadius = 5
+        button.addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
+        return button
     }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        TranslationService.setup(viewController: self)
         addTextLabel()
-        delegate?.translateViewTexts()
     }
 
     private func addTextLabel() {
@@ -34,6 +38,17 @@ class ViewController: UIViewController {
         view.addSubview(textLabel)
         textLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         textLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
+        
+        button.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(button)
+        NSLayoutConstraint.activate([
+            button.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            button.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: 50)
+        ])
+    }
+    
+    @objc private func buttonTapped() {
+        print("DEBUG: button tapped")
     }
 }
 

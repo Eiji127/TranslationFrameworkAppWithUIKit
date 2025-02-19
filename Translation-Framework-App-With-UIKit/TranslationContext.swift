@@ -19,8 +19,6 @@ class TranslationContext {
             target: Locale.Language(identifier: targetLanguage)
         )
     }()
-
-    var session: TranslationSession?
 }
 
 extension EnvironmentValues {

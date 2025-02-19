@@ -6,10 +6,32 @@
 //
 
 import Foundation
+import UIKit
+import SwiftUI
 import Translation
 
 struct TranslationService {
+    
     private let cache = NSCache<NSString, NSString>()
+    
+    static func setup(viewController: UIViewController) {
+        let translationEmptyView = TranslationEmptyView()
+        let hostingController = UIHostingController(rootView: translationEmptyView)
+        hostingController.view.backgroundColor = .clear
+        hostingController.view.isUserInteractionEnabled = false
+        
+        viewController.addChild(hostingController)
+        viewController.view.addSubview(hostingController.view)
+        
+        hostingController.view.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            hostingController.view.topAnchor.constraint(equalTo: viewController.view.topAnchor),
+            hostingController.view.bottomAnchor.constraint(equalTo: viewController.view.bottomAnchor),
+            hostingController.view.leadingAnchor.constraint(equalTo: viewController.view.leadingAnchor),
+            hostingController.view.trailingAnchor.constraint(equalTo: viewController.view.trailingAnchor)
+        ])
+        hostingController.didMove(toParent: viewController)
+    }
 
     func translate(using session: TranslationSession?, from text: String) async throws -> String {
         if let translation = cache.object(forKey: NSString(string: text)) {
