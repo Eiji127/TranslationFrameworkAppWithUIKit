@@ -36,14 +36,9 @@ class ViewController: UIViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        // ② 翻訳処理を実行
-        if let sourceText = textLabel.text {
-            Task { @MainActor in
-                let targetedText = try? await TranslationService.shared.translate(on: self, from: sourceText)
-                textLabel.text = targetedText
-                view.layoutIfNeeded()
-            }
-        }
+        
+        // ② self.viewに対して網羅的に翻訳を実行していく。
+        translateSubviews(view: view)
     }
 
     private func configureView() {
@@ -58,6 +53,55 @@ class ViewController: UIViewController {
             button.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             button.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: 50)
         ])
+    }
+    
+    func translateSubviews(view: UIView) {
+        // UILabel のテキストを取得
+        if let label = view as? UILabel, let text = label.text {
+            Task { @MainActor in
+                let targetedText = try? await TranslationService.shared.translate(on: self, from: text)
+                label.text = targetedText
+            }
+        }
+        
+        // UIButton のタイトルを取得
+        if let button = view as? UIButton, let title = button.title(for: .normal) {
+            Task { @MainActor in
+                let targetedText = try? await TranslationService.shared.translate(on: self, from: title)
+                button.setTitle(targetedText, for: .normal)
+            }
+        }
+        
+        // UITextField のプレースホルダーとテキストを取得
+        if let textField = view as? UITextField {
+            if let text = textField.text, !text.isEmpty {
+                Task { @MainActor in
+                    let targetedText = try? await TranslationService.shared.translate(on: self, from: text)
+                    textField.text = targetedText
+                }
+            }
+            if let placeholder = textField.placeholder {
+                Task { @MainActor in
+                    let targetedText = try? await TranslationService.shared.translate(on: self, from: placeholder)
+                    textField.placeholder = targetedText
+                }
+            }
+        }
+        
+        // UITextView のテキストを取得
+        if let textView = view as? UITextView, !textView.text.isEmpty {
+            Task { @MainActor in
+                let targetedText = try? await TranslationService.shared.translate(on: self, from: textView.text)
+                textView.text = targetedText
+            }
+        }
+        
+        // 再帰的に子ビューを検索
+        for subview in view.subviews {
+            translateSubviews(view: subview)
+        }
+        
+        view.layoutIfNeeded()
     }
     
     @objc private func buttonTapped() {
