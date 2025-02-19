@@ -13,10 +13,16 @@ struct TranslationEmptyView: View {
     @State private var translationContext = TranslationContext()
     @UIApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
     
+    let sourceText: String?
+    
     var body: some View {
         VStack{}
             .translationTask(translationContext.configuration) { session in
+                guard let sourceText else { return }
+                let request: TranslationSession.Request = .init(sourceText: sourceText)
+                
                 appDelegate.translationSession = session
+                appDelegate.translationRequest = request
             }
             .background(.clear)
     }

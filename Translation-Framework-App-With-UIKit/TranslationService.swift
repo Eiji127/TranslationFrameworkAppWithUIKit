@@ -14,8 +14,8 @@ struct TranslationService {
     
     private let cache = NSCache<NSString, NSString>()
     
-    static func setup(viewController: UIViewController) {
-        let translationEmptyView = TranslationEmptyView()
+    static func setup(viewController: UIViewController, sourceText: String?) {
+        let translationEmptyView = TranslationEmptyView(sourceText: sourceText)
         let hostingController = UIHostingController(rootView: translationEmptyView)
         hostingController.view.backgroundColor = .clear
         hostingController.view.isUserInteractionEnabled = false

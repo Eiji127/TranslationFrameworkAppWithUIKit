@@ -29,7 +29,7 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        TranslationService.setup(viewController: self)
+        TranslationService.setup(viewController: self, sourceText: button.titleLabel?.text)
         addTextLabel()
     }
 

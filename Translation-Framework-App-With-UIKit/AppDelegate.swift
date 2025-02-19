@@ -16,6 +16,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             translate()
         }
     }
+    var translationRequest: TranslationSession.Request? = nil
+
     let trasnlationService = TranslationService()
     var foodItems = ["The Best Food is Mcdonald's Fried Potato 🍟", "Salad 🥗", "Soup 🍜"]
 
@@ -34,7 +36,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     private func translate() {
         Task { @MainActor in
-            let translated = try? await trasnlationService.translate(using: translationSession, from: foodItems.first ?? "Failed")
+            guard let translationRequest else { return }
+            let translated = try? await trasnlationService.translate(using: translationSession, from: translationRequest.sourceText)
             print("DEBUG: \(String(describing: translated))")
         }
     }
