@@ -10,30 +10,19 @@ import UIKit
 import SwiftUI
 import Translation
 
-struct TranslationService {
+class TranslationService {
+    static let shared: TranslationService = .init()
+    
+    var session: TranslationSession? {
+        didSet {
+            print("DEBUG: Set Translation Session")
+        }
+    }
     
     private let cache = NSCache<NSString, NSString>()
-    
-    static func setup(viewController: UIViewController, sourceText: String?) {
-        let translationEmptyView = TranslationEmptyView(sourceText: sourceText)
-        let hostingController = UIHostingController(rootView: translationEmptyView)
-        hostingController.view.backgroundColor = .clear
-        hostingController.view.isUserInteractionEnabled = false
-        
-        viewController.addChild(hostingController)
-        viewController.view.addSubview(hostingController.view)
-        
-        hostingController.view.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            hostingController.view.topAnchor.constraint(equalTo: viewController.view.topAnchor),
-            hostingController.view.bottomAnchor.constraint(equalTo: viewController.view.bottomAnchor),
-            hostingController.view.leadingAnchor.constraint(equalTo: viewController.view.leadingAnchor),
-            hostingController.view.trailingAnchor.constraint(equalTo: viewController.view.trailingAnchor)
-        ])
-        hostingController.didMove(toParent: viewController)
-    }
 
-    func translate(using session: TranslationSession?, from text: String) async throws -> String {
+    @MainActor
+    func translate(on viewController: UIViewController, from text: String) async throws -> String {
         if let translation = cache.object(forKey: NSString(string: text)) {
             return String(translation)
         }
@@ -52,5 +41,24 @@ struct TranslationService {
             print("Error: Translation Failed - \(error)")
         }
         return text
+    }
+    
+    func setUp(viewController: UIViewController) {
+        let translationEmptyView = TranslationEmptyView()
+        let hostingController = UIHostingController(rootView: translationEmptyView)
+        hostingController.view.backgroundColor = .clear
+        hostingController.view.isUserInteractionEnabled = false
+        
+        viewController.addChild(hostingController)
+        viewController.view.addSubview(hostingController.view)
+        
+        hostingController.view.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            hostingController.view.topAnchor.constraint(equalTo: viewController.view.topAnchor),
+            hostingController.view.bottomAnchor.constraint(equalTo: viewController.view.bottomAnchor),
+            hostingController.view.leadingAnchor.constraint(equalTo: viewController.view.leadingAnchor),
+            hostingController.view.trailingAnchor.constraint(equalTo: viewController.view.trailingAnchor)
+        ])
+        hostingController.didMove(toParent: viewController)
     }
 }

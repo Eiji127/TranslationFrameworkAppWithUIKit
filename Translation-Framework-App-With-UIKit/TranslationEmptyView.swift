@@ -11,18 +11,11 @@ import Translation
 struct TranslationEmptyView: View {
     @AppStorage("targetLanguage") private var targetLanguage = "ja"
     @State private var translationContext = TranslationContext()
-    @UIApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
-    
-    let sourceText: String?
     
     var body: some View {
         VStack{}
             .translationTask(translationContext.configuration) { session in
-                guard let sourceText else { return }
-                let request: TranslationSession.Request = .init(sourceText: sourceText)
-                
-                appDelegate.translationSession = session
-                appDelegate.translationRequest = request
+                TranslationService.shared.session = session
             }
             .background(.clear)
     }

@@ -19,7 +19,7 @@ class ViewController: UIViewController {
     private lazy var button: UIButton = {
         let button = UIButton()
         button.titleLabel?.text = "Please Tapp This Button"
-        button.setTitle("Please Tapp This Button", for: .normal)
+        button.setTitle("Please Tap This Button", for: .normal)
         button.frame = CGRect(x: 100, y: 200, width: 200, height: 50)
         button.layer.cornerRadius = 5
         button.addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
@@ -28,12 +28,25 @@ class ViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        // ① 先にTranslationEmptyViewを画面にセット
+        TranslationService.shared.setUp(viewController: self)
         
-        TranslationService.setup(viewController: self, sourceText: button.titleLabel?.text)
-        addTextLabel()
+        configureView()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        // ② 翻訳処理を実行
+        if let sourceText = textLabel.text {
+            Task { @MainActor in
+                let targetedText = try? await TranslationService.shared.translate(on: self, from: sourceText)
+                textLabel.text = targetedText
+                view.layoutIfNeeded()
+            }
+        }
     }
 
-    private func addTextLabel() {
+    private func configureView() {
         textLabel.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(textLabel)
         textLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
@@ -51,4 +64,3 @@ class ViewController: UIViewController {
         print("DEBUG: button tapped")
     }
 }
-
